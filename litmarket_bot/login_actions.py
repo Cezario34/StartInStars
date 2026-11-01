@@ -1,11 +1,10 @@
 import random
 import time
-from playwright.sync_api import TimeoutError as PlaywrightTimeoutError
 
-from human import human_click, human_type, random_sleep
-from reader import go_through_reader
-from like import do_like
-from library import add_to_library
+from litmarket_bot.core.human import human_click, human_type, random_sleep
+from litmarket_bot.actions.reader import go_through_reader
+from litmarket_bot.actions.like import do_like
+from litmarket_bot.actions.library import add_to_library
 
 def run_login_actions(playwright, account, proxy, book_url):
     email = account["email"]

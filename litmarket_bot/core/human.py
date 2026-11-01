@@ -28,7 +28,6 @@ def human_click(page, locator, mouse_pos):
         random_sleep(150, 300)
         box = locator.bounding_box()
         if not box:
-            print("Не найден bounding box")
             return
 
         offset_x = random.randint(-int(box["width"]/4), int(box["width"]/4)) if box["width"] > 20 else 0
@@ -59,3 +58,9 @@ def human_type(page, locator, text, mouse_pos):
             page.keyboard.press("Backspace")
             random_sleep(100, 200)
         time.sleep(random.uniform(0.05, 0.12) if random.random() < 0.8 else random.uniform(0.15, 0.3))
+
+def human_scroll(page, times=None):
+    times = times or random.randint(2, 4)
+    for _ in range(times):
+        page.mouse.wheel(0, random.randint(400, 900))
+        time.sleep(random.uniform(1.2, 2.5))

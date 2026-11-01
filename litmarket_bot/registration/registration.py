@@ -4,10 +4,10 @@ from pathlib import Path
 from playwright.sync_api import TimeoutError as PlaywrightTimeoutError
 
 from utils import get_realistic_browser_profile, get_realistic_viewport, generate_account_data
-from human import human_click, human_type, random_sleep
+from litmarket_bot.core.human import human_click, human_type, random_sleep
 from warmup import warmup
 
-ACCOUNTS_FILE = Path("accounts.txt")
+ACCOUNTS_FILE = Path("../data/accounts.txt")
 
 def register_one(playwright, proxy, account_num):
     profile = get_realistic_browser_profile()

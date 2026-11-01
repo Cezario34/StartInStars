@@ -1,6 +1,6 @@
 from pathlib import Path
 
-ACCOUNTS_FILE = Path("accounts.txt")
+ACCOUNTS_FILE = Path("data/accounts.txt")
 
 def load_accounts():
     accounts = []

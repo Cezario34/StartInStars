@@ -1,6 +1,6 @@
 from pathlib import Path
 
-PROXIES_FILE = Path("proxies.txt")
+PROXIES_FILE = Path("data/proxies.txt")
 
 def load_proxies():
     proxies = []

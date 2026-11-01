@@ -1,6 +1,6 @@
 import random
 import time
-from human import human_click
+from litmarket_bot.core.human import human_click
 
 def close_like_modal(page, mouse_pos):
     """Закрывает модалку после лайка. Пробует несколько раз."""
