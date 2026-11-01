@@ -1,5 +1,5 @@
 import random
-
+import logging
 # Таймауты
 PAGE_TIMEOUT = 60000
 ELEMENT_TIMEOUT = 10000
@@ -27,3 +27,13 @@ LAUNCH_ARGS = [
 def random_pause(min_s, max_s):
     import time
     time.sleep(random.uniform(min_s, max_s))
+
+def setup_logging():
+    logging.basicConfig(
+        level=logging.INFO,
+        format="%(asctime)s | %(levelname)s | %(message)s",
+        datefmt="%H:%M:%S"
+    )
+    return logging.getLogger("litmarket")
+
+log = setup_logging()

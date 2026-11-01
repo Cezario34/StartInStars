@@ -13,8 +13,8 @@ def register_one(playwright, proxy, account_num):
     profile = get_realistic_browser_profile()
     width, height = get_realistic_viewport()
 
-    print(f"\n{'='*50}")
-    print(f"Аккаунт {account_num} | Прокси: {proxy['ip_port']}")
+    log.info(f"\n{'='*50}")
+    log.info(f"Аккаунт {account_num} | Прокси: {proxy['ip_port']}")
 
     browser = playwright.chromium.launch(
         headless=False,
@@ -45,8 +45,8 @@ def register_one(playwright, proxy, account_num):
 
     try:
         email, password = generate_account_data()
-        print(f"Email: {email}")
-        print(f"Пароль: {password}")
+        log.info(f"Email: {email}")
+        log.info(f"Пароль: {password}")
 
         page.goto("https://litmarket.ru/")
         page.mouse.move(mouse_pos[0], mouse_pos[1])
@@ -73,9 +73,9 @@ def register_one(playwright, proxy, account_num):
 
         try:
             page.get_by_text("уже существует").wait_for(timeout=5000)
-            print("Почта уже существует")
+            log.info("Почта уже существует")
         except PlaywrightTimeoutError:
-            print("Почта успешно создана")
+            log.info("Почта успешно создана")
             current_id = 1
             if ACCOUNTS_FILE.exists():
                 lines = [l for l in ACCOUNTS_FILE.read_text(encoding="utf-8").strip().splitlines() if l.strip()]
@@ -84,11 +84,11 @@ def register_one(playwright, proxy, account_num):
             line = f"{current_id} | {email} | {password} | {profile['userAgent']} | {width} | {height}\n"
             with ACCOUNTS_FILE.open("a", encoding="utf-8") as f:
                 f.write(line)
-            print(f"Записано в accounts.txt (ID: {current_id})")
+            log.info(f"Записано в accounts.txt (ID: {current_id})")
 
-        print(f"Готово для {email}")
+        log.info(f"Готово для {email}")
 
     except Exception as e:
-        print(f"Ошибка: {e}")
+        log.info(f"Ошибка: {e}")
     finally:
         browser.close()

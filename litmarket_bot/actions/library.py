@@ -1,10 +1,11 @@
 import random
 import time
 from core.human import human_click
-from config import SHELVES, random_pause
+from config import SHELVES, random_pause, log
+
 
 def add_to_library(page, mouse_pos):
-    print("--- Библиотека ---")
+    log.info("--- Библиотека ---")
     try:
         # Ждём появления блока библиотеки
         page.locator(".library-button, .btn-library").first.wait_for(timeout=12000)
@@ -15,21 +16,21 @@ def add_to_library(page, mouse_pos):
         btn_text = ""
         if btn.count() > 0:
             btn_text = (btn.text_content() or "").strip()
-        print(f"Текст кнопки: [{btn_text}]")
+        log.info(f"Текст кнопки: [{btn_text}]")
 
         # Уже в библиотеке?
         already = any(word in btn_text.lower() for word in ["библиотеке", "читаю", "прочитано", "избранн"])
         if already:
-            print("Книга уже в библиотеке — пропускаем")
+            log.info("Книга уже в библиотеке — пропускаем")
             return
 
         # Ищем кнопку добавления
         add_btn = page.locator(".btn-library").filter(has_text="В библиотеку").first
         if add_btn.count() == 0 or not add_btn.is_visible(timeout=4000):
-            print("Кнопка «В библиотеку» не найдена")
+            log.info("Кнопка «В библиотеку» не найдена")
             return
 
-        print("Кликаем «В библиотеку»...")
+        log.info("Кликаем «В библиотеку»...")
         # Человеческий клик
         human_click(page, add_btn, mouse_pos)
         random_pause(1.5, 2.3)
@@ -41,17 +42,17 @@ def add_to_library(page, mouse_pos):
         try:
             modal.wait_for(state="visible", timeout=4000)
             modal_opened = True
-            print("Модалка полок открылась")
+            log.info("Модалка полок открылась")
         except:
-            print("Человеческий клик не открыл модалку, пробуем прямой...")
+            log.info("Человеческий клик не открыл модалку, пробуем прямой...")
             try:
                 add_btn.click(force=True)
                 random_pause(1.5, 2.3)
                 modal.wait_for(state="visible", timeout=5000)
                 modal_opened = True
-                print("Модалка открылась прямым кликом")
+                log.info("Модалка открылась прямым кликом")
             except:
-                print("Модалка так и не появилась")
+                log.info("Модалка так и не появилась")
                 return
 
         if not modal_opened:
@@ -59,7 +60,7 @@ def add_to_library(page, mouse_pos):
 
         # Выбираем полку
         shelf = random.choice(SHELVES)
-        print(f"Выбираем полку: {shelf}")
+        log.info(f"Выбираем полку: {shelf}")
 
         shelf_btn = None
         selectors = [
@@ -76,14 +77,14 @@ def add_to_library(page, mouse_pos):
                 break
 
         if not shelf_btn:
-            print("Кнопка полки не найдена")
+            log.info("Кнопка полки не найдена")
             texts = page.locator(".library-window button, .shelve-button").all_text_contents()
-            print(f"Доступные кнопки: {texts}")
+            log.info(f"Доступные кнопки: {texts}")
             return
 
         human_click(page, shelf_btn, mouse_pos)
         random_pause(1.2, 2.0)
-        print(f"Книга добавлена на полку: {shelf}")
+        log.info(f"Книга добавлена на полку: {shelf}")
 
     except Exception as e:
-        print(f"Ошибка библиотеки: {e}")
+        log.info(f"Ошибка библиотеки: {e}")

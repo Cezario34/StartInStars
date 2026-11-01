@@ -1,11 +1,13 @@
 from pathlib import Path
+from config import SHELVES, random_pause, log
+
 
 ACCOUNTS_FILE = Path("data/accounts.txt")
 
 def load_accounts():
     accounts = []
     if not ACCOUNTS_FILE.exists():
-        print("Ошибка: accounts.txt не найден")
+        log.info("Ошибка: accounts.txt не найден")
         return accounts
 
     for line in ACCOUNTS_FILE.read_text(encoding="utf-8").splitlines():
@@ -23,5 +25,5 @@ def load_accounts():
                 "height": int(parts[5])
             })
         else:
-            print(f"Пропущена строка: {line}")
+            log.info(f"Пропущена строка: {line}")
     return accounts

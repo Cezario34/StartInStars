@@ -1,5 +1,6 @@
 import random
 from faker import Faker
+from config import SHELVES, random_pause, log
 
 faker = Faker("ru_RU")
 
