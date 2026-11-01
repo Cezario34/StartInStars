@@ -2,6 +2,24 @@ import random
 import time
 from human import human_click
 
+def close_payment_modal(page, mouse_pos):
+    """Закрывает модалку оплаты, если она появилась"""
+    try:
+        title = page.locator("h2:has-text('Оплата'), .lmSimpleModal__title:has-text('Оплата')").first
+        if not title.is_visible(timeout=1500):
+            return False
+
+        print("Появилась модалка оплаты, закрываем...")
+        close_btn = page.locator("button[aria-label='Закрыть окно']").first
+        if close_btn.is_visible(timeout=2000):
+            human_click(page, close_btn, mouse_pos)
+            time.sleep(random.uniform(0.8, 1.5))
+            print("Модалка оплаты закрыта")
+            return True
+    except:
+        pass
+    return False
+
 def handle_reader_library_modal(page, mouse_pos):
     """Если в читалке появилась модалка «Добавьте на полку» — кликаем по полке"""
     try:
@@ -87,6 +105,11 @@ def go_through_reader(page, mouse_pos, book_url):
             time.sleep(random.uniform(1.8, 2.8))
             page.evaluate("window.scrollTo(0, document.body.scrollHeight)")
             time.sleep(1)
+
+            # Закрываем модалку оплаты — если была, выходим из читалки
+            if close_payment_modal(page, mouse_pos):
+                print("Была оплата — выходим из читалки")
+                break
 
             # Кнопка to-be-continue
             handle_to_be_continue_button(page, mouse_pos)
