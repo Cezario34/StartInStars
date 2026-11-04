@@ -2,12 +2,14 @@ import random
 import time
 from pathlib import Path
 from playwright.sync_api import TimeoutError as PlaywrightTimeoutError
-
+from config import log
 from utils import get_realistic_browser_profile, get_realistic_viewport, generate_account_data
 from litmarket_bot.core.human import human_click, human_type, random_sleep
-from warmup import warmup
+from warmup import warmup_before_book as warmup
 
-ACCOUNTS_FILE = Path("../data/accounts.txt")
+BASE_DIR = Path(__file__).resolve().parent
+ACCOUNTS_FILE = BASE_DIR / "accounts.txt"
+
 
 def register_one(playwright, proxy, account_num):
     profile = get_realistic_browser_profile()

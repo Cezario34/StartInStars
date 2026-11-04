@@ -1,70 +1,49 @@
 import random
 import time
-from litmarket_bot.core.human import human_click
-from config import SHELVES, random_pause, log
-
-def warmup(page, mouse_pos):
-    log.info("Начинаем прогрев...")
-
-    for _ in range(random.randint(2, 4)):
-        page.mouse.wheel(0, random.randint(400, 900))
-        time.sleep(random.uniform(1.2, 2.8))
-
-    time.sleep(random.uniform(2, 4))
-
-    try:
-        book = page.locator("a[href*='/books/']").nth(random.randint(0, 5))
-        if book.is_visible(timeout=4000):
-            human_click(page, book, mouse_pos)
-            time.sleep(random.uniform(3, 6))
-
-            for _ in range(random.randint(1, 3)):
-                page.mouse.wheel(0, random.randint(300, 700))
-                time.sleep(random.uniform(1, 2.5))
-
-            page.go_back()
-            time.sleep(random.uniform(2, 4))
-    except Exception as e:
-        log.info(f"Прогрев (книга): {e}")
-
-    page.mouse.wheel(0, random.randint(200, 500))
-    time.sleep(random.uniform(1.5, 3))
-    log.info("Прогрев завершён")
-
-import random
-import time
 from core.human import human_click, human_scroll, human_pause
 from config import log
 
+
+def is_real_book(href: str) -> bool:
+    if not href or "/books/" not in href:
+        return False
+    if any(x in href for x in ["/genres/", "/tags/", "/cycles/", "/authors/"]):
+        return False
+    slug = href.rstrip("/").split("/books/")[-1]
+    return bool(slug and "/" not in slug and "?" not in slug and len(slug) > 3)
+
+
 def warmup_before_book(page, mouse_pos):
-    """Случайный прогрев перед целевой книгой"""
     log.info("Прогрев перед книгой...")
 
-    # Скроллим главную
     human_scroll(page, "normal")
     human_pause()
 
-    # Иногда открываем случайную книгу
-    if random.random() < 0.6:
+    if random.random() < 0.5:
         try:
             books = page.locator("a[href*='/books/']")
             count = books.count()
-            if count > 3:
-                idx = random.randint(0, min(count - 1, 8))
-                book = books.nth(idx)
-                if book.is_visible(timeout=3000):
-                    log.info("Открываем случайную книгу для прогрева")
-                    human_click(page, book, mouse_pos)
-                    human_pause()
-                    human_scroll(page, "light")
-                    time.sleep(random.uniform(2, 4))
-                    page.go_back()
-                    human_pause()
-        except Exception as e:
-            log.info(f"Прогрев (книга): {e}")
 
-    # Ещё немного скролла
-    if random.random() < 0.4:
+            valid = []
+            for i in range(min(count, 25)):
+                b = books.nth(i)
+                href = b.get_attribute("href") or ""
+                if is_real_book(href) and b.is_visible():
+                    valid.append(b)
+
+            if valid:
+                book = random.choice(valid[:8])
+                log.info("Открываем случайную книгу для прогрева")
+                human_click(page, book, mouse_pos)
+                human_pause()
+                human_scroll(page, "light")
+                time.sleep(random.uniform(2, 4))
+                page.go_back()
+                human_pause()
+        except Exception as e:
+            log.info(f"Прогрев: {e}")
+
+    if random.random() < 0.3:
         human_scroll(page, "light")
 
     log.info("Прогрев завершён")
